@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=ico\white-be.ico
 #AutoIt3Wrapper_Outfile=COT.exe
 #AutoIt3Wrapper_Res_Description=Utility for recognizing and translating text captured from the screen...
-#AutoIt3Wrapper_Res_Fileversion=0.9.0.49
+#AutoIt3Wrapper_Res_Fileversion=0.9.0.50
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=Capture-OCR-Translate
 #AutoIt3Wrapper_Res_ProductVersion=0.9.0
