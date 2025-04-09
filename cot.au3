@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Res_Description=Utility for recognizing and translating text captured from the screen...
 #AutoIt3Wrapper_Res_Fileversion=0.9.1.51
 #AutoIt3Wrapper_Res_ProductName=Capture-OCR-Translate
-#AutoIt3Wrapper_Res_ProductVersion=0.9.0
+#AutoIt3Wrapper_Res_ProductVersion=0.9.1
 #AutoIt3Wrapper_Res_CompanyName=NyBumBum
 #AutoIt3Wrapper_Res_LegalCopyright=Copyright © NyBumBum 2025
 #AutoIt3Wrapper_Res_Language=1033
