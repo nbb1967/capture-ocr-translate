@@ -1456,12 +1456,12 @@ Func _ActivityContextMenuItem_Input()
 	;--------------------------------------------------
 	$iAll = StringLen(GUICtrlRead($idInput_API_OCRAPIKey))
 	If $iAll = 0 Or $iAll = $iSelect Then
-		If _GUICtrlMenu_GetItemEnabled($hContextMenu_Edit, 5) Then
-			_GUICtrlMenu_SetItemDisabled($hContextMenu_Edit, 5)		;Select All
+		If _GUICtrlMenu_GetItemEnabled($hContextMenu_Input, 5) Then
+			_GUICtrlMenu_SetItemDisabled($hContextMenu_Input, 5)	;Select All
 		EndIf
 	Else
-		If _GUICtrlMenu_GetItemDisabled($hContextMenu_Edit, 5) Then
-			_GUICtrlMenu_SetItemEnabled($hContextMenu_Edit, 5)		;Select All
+		If _GUICtrlMenu_GetItemDisabled($hContextMenu_Input, 5) Then
+			_GUICtrlMenu_SetItemEnabled($hContextMenu_Input, 5)		;Select All
 		EndIf
 	EndIf
 EndFunc
