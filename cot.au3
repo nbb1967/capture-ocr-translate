@@ -2,8 +2,7 @@
 #AutoIt3Wrapper_Icon=ico\white-be.ico
 #AutoIt3Wrapper_Outfile=COT.exe
 #AutoIt3Wrapper_Res_Description=Utility for recognizing and translating text captured from the screen...
-#AutoIt3Wrapper_Res_Fileversion=0.9.0.51
-#AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
+#AutoIt3Wrapper_Res_Fileversion=0.9.1.51
 #AutoIt3Wrapper_Res_ProductName=Capture-OCR-Translate
 #AutoIt3Wrapper_Res_ProductVersion=0.9.0
 #AutoIt3Wrapper_Res_CompanyName=NyBumBum
@@ -297,7 +296,7 @@ $idIcon_ABT = GUICtrlCreateIcon(@ScriptFullPath, 99, 404, 44, 48, 48)
 $idLabel_ABT_AppName = GUICtrlCreateLabel(_GetStrRes($asArrayGUI_App[$eAppName]), 34, 52, 323, 41)							;"Capture-OCR-Translate"
 GUICtrlSetFont(-1, 20, 800, 0, "Segoe UI")
 GUICtrlSetColor(-1, 0xD9D9D9)
-$idLabel_ABT_Version = GUICtrlCreateLabel("0.9.0", 34, 110, 350, 21)														;"X.X.X"----------------------------------->>>>>>>       !
+$idLabel_ABT_Version = GUICtrlCreateLabel("0.9.1", 34, 110, 350, 21)														;"X.X.X"----------------------------------->>>>>>>       !
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
 $idLabel_ABT_Copyright = GUICtrlCreateLabel(_GetStrRes($asArrayTabAbout[$eCopyright]), 34, 131, 350, 21)					;"Copyright © NyBumBum 2025"
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
