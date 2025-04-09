@@ -162,8 +162,8 @@ If $hContextMenu_Edit <> 0 Then
 	$hEdit = GUICtrlGetHandle($idEdit_RSLT)
 	$wProcOld_Edit = _WinAPI_SetWindowLong($hEdit, $GWL_WNDPROC, DllCallbackGetPtr($wProcHandle))
 EndIf
-;----------------------------------------------------------------------TAB GENERALS
-$hTabGenerals = GUICtrlCreateTabItem(_GetStrRes($asArrayGUI_App[$eTabGeneral]))												;"Generals"
+;----------------------------------------------------------------------TAB GENERAL
+$hTabGeneral = GUICtrlCreateTabItem(_GetStrRes($asArrayGUI_App[$eTabGeneral]))												;"General"
 $idCheckbox_GNR_Clipboard = GUICtrlCreateCheckbox(_GetStrRes($asArrayTabGeneral[$eClipboard]), 34, 48, 423, 21)				;"Put the result in the clipboard"
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
 If $sPutResultToClipboard == "True" Then
@@ -789,7 +789,7 @@ Func _Check_Hotkeys()
 		EndIf
 	Else
 		If $i_tmp_OCRHotkeyCode = $iTransHotkeyCode And Not ($i_tmp_OCRHotkeyCode = 0) Then
-			MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_Hotkey[$eOCR_Occupied]))			;"Error"	"The hotkey for OCR are occupied. Try replacing hotkeys one by one."
+			MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_Hotkey[$eOCR_Occupied]))			;"Error"	"The hotkey for OCR is occupied. Try replacing hotkeys one by one."
 			_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyOCR, $iOCRHotkeyCode)
 			_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyTrans, $iTransHotkeyCode)
 			SetError(21)
