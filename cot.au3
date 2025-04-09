@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=ico\white-be.ico
 #AutoIt3Wrapper_Outfile=COT.exe
 #AutoIt3Wrapper_Res_Description=Utility for recognizing and translating text captured from the screen...
-#AutoIt3Wrapper_Res_Fileversion=0.9.0.50
+#AutoIt3Wrapper_Res_Fileversion=0.9.0.51
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=Capture-OCR-Translate
 #AutoIt3Wrapper_Res_ProductVersion=0.9.0
@@ -32,7 +32,7 @@
 #include <GUIConstants.au3>
 #include <GUIConstantsEx.au3>
 #include <GuiEdit.au3>
-#include <GuiHotkey.au3> ;(UDF by Mat)
+#include <include\GuiHotkey.au3> ;(UDF by Mat)
 #include <GuiMenu.au3>
 #include <Misc.au3>
 #include <ScreenCapture.au3>
