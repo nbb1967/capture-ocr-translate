@@ -2,9 +2,10 @@
 #AutoIt3Wrapper_Icon=ico\white-be.ico
 #AutoIt3Wrapper_Outfile=COT.exe
 #AutoIt3Wrapper_Res_Description=Utility for recognizing and translating text captured from the screen...
-#AutoIt3Wrapper_Res_Fileversion=0.9.1.51
+#AutoIt3Wrapper_Res_Fileversion=0.9.2.54
+#AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=Capture-OCR-Translate
-#AutoIt3Wrapper_Res_ProductVersion=0.9.1
+#AutoIt3Wrapper_Res_ProductVersion=0.9.2
 #AutoIt3Wrapper_Res_CompanyName=NyBumBum
 #AutoIt3Wrapper_Res_LegalCopyright=Copyright © NyBumBum 2025
 #AutoIt3Wrapper_Res_Language=1033
@@ -16,6 +17,7 @@
 #AutoIt3Wrapper_Run_Tidy=y
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
+
 
 ;Hey! Don't forget to replace the cursor in Resource Hacker....
 ;Don't forget to change the version in About....
@@ -55,7 +57,7 @@ Opt('GUIEventOptions', 1)	;for Saving Window Position on minimize
 Opt("TrayOnEventMode", 1)
 Opt("TrayMenuMode", 1+2+4)
 
-Global Const $sRegexCurlError = '(?m)^(curl:\s\([0-9]{1,2}\).*)$'
+Global Const $sRegexCurlError = '(curl:\s\([0-9]{1,2}\).*)$'
 Global $bNeedAPIKey = False
 Global $idSelectAll	; for castom menu
 Global $hEdit, $hInput
@@ -88,8 +90,8 @@ EndFunc   ;==>_GetStringFromResources
 ;------------------------------------
 Global Enum $eAppName, $eTabResult, $eTabGeneral, $eTabAPIKey, $eTabHotkey, $eTabLanguage, $eTabAbout
 Global $asArrayGUI_App[7] = [6000, 6001, 6002, 6003, 6004, 6005, 6006]
-Global Enum $eClipboard, $eResultOut, $eAlwaysOnTop, $eTrayIconAction
-Global $asArrayTabGeneral[4] = [6016, 6017, 6018, 6019]
+Global Enum $eClipboard, $eAlwaysOnTop, $eTrayIconAction
+Global $asArrayTabGeneral[3] = [6016, 6017, 6018]
 ;----------
 Global $asArrayTrayIconAction[3] = [6032, 6033, 6034]
 Global Enum $eDescription, $eGetOCRAPIKey, $eSave
@@ -124,8 +126,8 @@ Global $asArrayMsg_Translate[4] = [6256, 6257, 6258, 6259]
 
 Global $sIni_Patch = @ScriptDir & "\settings.ini"
 Global $iWidth_GUI = 490, $iHeight_GUI = 300
-Global $iWinPos_X, $iWinPos_Y, $sFontResult, $iFontSizeResult, $sPutResultToClipboard, $sDisplayResultToResultTab, $sAlwaysOnTop, $iTrayIconAction, $sOCRAPIKey, $sTranslateAPIKey, $sOCRHotkey, $iOCRHotkeyCode, $sTranslateHotkey, $iTransHotkeyCode, $sTargetLanguage
-Global $bPutResultToClipboard, $bDisplayResultToResultTab, $bAlwaysOnTop
+Global $iWinPos_X, $iWinPos_Y, $sFontResult, $iFontSizeResult, $sPutResultToClipboard, $sAlwaysOnTop, $iTrayIconAction, $sOCRAPIKey, $sTranslateAPIKey, $sOCRHotkey, $iOCRHotkeyCode, $sTranslateHotkey, $iTransHotkeyCode, $sTargetLanguage
+Global $bPutResultToClipboard, $bAlwaysOnTop
 Global $aisArrayLanguageCodes[191][2] = [[4,"zh-CN"],[1025,"ar"],[1026,"bg"],[1027,"ca"],[1028,"zh-TW"],[1029,"cs"],[1030,"da"],[1031,"de"],[1032,"el"],[1033,"en"],[1034,"es"],[1035,"fi"],[1036,"fr"],[1037,"he"],[1038,"hu"],[1039,"is"],[1040,"it"],[1041,"ja"],[1042,"ko"],[1043,"nl"],[1044,"no"],[1045,"pl"],[1046,"pt"],[1048,"ro"],[1049,"ru"],[1050,"hr"],[1051,"sk"],[1052,"sq"],[1053,"sv"],[1054,"th"],[1055,"tr"],[1056,"ur"],[1057,"id"],[1058,"uk"],[1059,"be"],[1060,"sl"],[1061,"et"],[1062,"lv"],[1063,"lt"],[1064,"tg"],[1065,"fa"],[1066,"vi"],[1067,"hy"],[1068,"az"],[1069,"eu"],[1071,"mk"],[1074,"tn"],[1076,"xh"],[1077,"zu"],[1078,"af"],[1079,"ka"],[1081,"hi"],[1082,"mt"],[1086,"ms"],[1087,"kk"],[1088,"ky"],[1089,"sw"],[1090,"tk"],[1091,"uz"],[1092,"tt"],[1093,"bn"],[1094,"pa"],[1095,"gu"],[1096,"or"],[1097,"ta"],[1098,"te"],[1099,"kn"],[1100,"ml"],[1101,"as"],[1102,"mr"],[1103,"sa"],[1104,"mn"],[1106,"cy"],[1107,"km"],[1108,"lo"],[1110,"gl"],[1111,"gom"],[1115,"si"],[1118,"am"],[1121,"ne"],[1122,"fy"],[1123,"ps"],[1124,"tl"],[1125,"dv"],[1128,"ha"],[1130,"yo"],[1131,"qu"],[1132,"nso"],[1133,"ba"],[1134,"lb"],[1136,"ig"],[1139,"ti"],[1141,"haw"],[1150,"br"],[1152,"ug"],[1153,"mi"],[1154,"oc"],[1155,"co"],[1159,"rw"],[1169,"gd"],[1170,"ku"],[2049,"ar"],[2051,"ca"],[2052,"zh-CN"],[2055,"de"],[2057,"en"],[2058,"es"],[2060,"fr"],[2064,"it"],[2067,"nl"],[2068,"no"],[2070,"pt-PT"],[2077,"sv"],[2080,"ur"],[2092,"az"],[2098,"tn"],[2108,"ga"],[2110,"ms"],[2117,"bn"],[2118,"pa-Arab"],[2121,"ta"],[2128,"mn"],[2137,"sd"],[2151,"ff"],[2155,"qu"],[2163,"ti"],[3073,"ar"],[3076,"zh-HK"],[3079,"de"],[3081,"en"],[3082,"es"],[3084,"fr"],[3098,"sr"],[3179,"qu"],[4097,"ar"],[4100,"zh-CN"],[4103,"de"],[4105,"en"],[4106,"es"],[4108,"fr"],[4122,"hr"],[5121,"ar"],[5124,"zh-TW"],[5127,"de"],[5129,"en"],[5130,"es"],[5132,"fr"],[5146,"bs"],[6145,"ar"],[6153,"en"],[6154,"es"],[6156,"fr"],[7169,"ar"],[7177,"en"],[7178,"es"],[7194,"sr"],[8193,"ar"],[8201,"en"],[8202,"es"],[9217,"ar"],[9225,"en"],[9226,"es"],[10241,"ar"],[10249,"en"],[10250,"es"],[10266,"sr"],[11265,"ar"],[11273,"en"],[11274,"es"],[12289,"ar"],[12297,"en"],[12298,"es"],[12314,"sr"],[13313,"ar"],[13321,"en"],[13322,"es"],[14337,"ar"],[14346,"es"],[15361,"ar"],[15370,"es"],[16385,"ar"],[16393,"en"],[16394,"es"],[17417,"en"],[17418,"es"],[18441,"en"],[18442,"es"],[19466,"es"],[20490,"es"],[21514,"es"],[31748,"zh-TW"]]
 
 _FixAccelHotKeyLayout()
@@ -172,16 +174,7 @@ Else
 	$bPutResultToClipboard = False
 EndIf
 
-$idCheckbox_GNR_ResultOut = GUICtrlCreateCheckbox(_GetStrRes($asArrayTabGeneral[$eResultOut]), 34, 70, 423, 21)				;"Display the result on the Result tab"
-GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
-If $sDisplayResultToResultTab == "True" Then
-	$bDisplayResultToResultTab = True
-	GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-	$bDisplayResultToResultTab = False
-EndIf
-
-$idCheckbox_GNR_AlwaysOnTop = GUICtrlCreateCheckbox(_GetStrRes($asArrayTabGeneral[$eAlwaysOnTop]), 34, 92, 423, 21)			;"Always on Top"
+$idCheckbox_GNR_AlwaysOnTop = GUICtrlCreateCheckbox(_GetStrRes($asArrayTabGeneral[$eAlwaysOnTop]), 34, 70, 423, 21)			;"Always on Top"
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
 If $sAlwaysOnTop == "True" Then
 	$bAlwaysOnTop = True
@@ -191,9 +184,9 @@ Else
 	$bAlwaysOnTop = False
 EndIf
 
-$idLabel_GNR_TrayIconAction = GUICtrlCreateLabel(_GetStrRes($asArrayTabGeneral[$eTrayIconAction]), 34, 120, 230, 51, $SS_RIGHT)	;"Clicking on the tray icon launches:"
+$idLabel_GNR_TrayIconAction = GUICtrlCreateLabel(_GetStrRes($asArrayTabGeneral[$eTrayIconAction]), 34, 98, 230, 51, $SS_RIGHT)	;"Clicking on the tray icon launches:"
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
-$idCombo_GNR_TrayIconAction = GUICtrlCreateCombo("", 277, 118, 180, 25, BitOR($GUI_SS_DEFAULT_COMBO,$CBS_SIMPLE))
+$idCombo_GNR_TrayIconAction = GUICtrlCreateCombo("", 277, 96, 180, 25, BitOR($GUI_SS_DEFAULT_COMBO,$CBS_SIMPLE))
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
 If $iTrayIconAction < 0 Or $iTrayIconAction > (UBound($asArrayTrayIconAction) - 1) Then
 	$iTrayIconAction = 0; Default
@@ -296,7 +289,7 @@ $idIcon_ABT = GUICtrlCreateIcon(@ScriptFullPath, 99, 404, 44, 48, 48)
 $idLabel_ABT_AppName = GUICtrlCreateLabel(_GetStrRes($asArrayGUI_App[$eAppName]), 34, 52, 323, 41)							;"Capture-OCR-Translate"
 GUICtrlSetFont(-1, 20, 800, 0, "Segoe UI")
 GUICtrlSetColor(-1, 0xD9D9D9)
-$idLabel_ABT_Version = GUICtrlCreateLabel("0.9.1", 34, 110, 350, 21)														;"X.X.X"----------------------------------->>>>>>>       !
+$idLabel_ABT_Version = GUICtrlCreateLabel("0.9.2", 34, 110, 350, 21)														;"X.X.X"----------------------------------->>>>>>>       !
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
 $idLabel_ABT_Copyright = GUICtrlCreateLabel(_GetStrRes($asArrayTabAbout[$eCopyright]), 34, 131, 350, 21)					;"Copyright © NyBumBum 2025"
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
@@ -409,13 +402,6 @@ While 1
 				$bPutResultToClipboard = False
 			EndIf
 			IniWrite($sIni_Patch, "General", "PutResultToClipboard", $bPutResultToClipboard)
-		Case $idCheckbox_GNR_ResultOut	;----------------------------------------------- Result Out
-			If BitAND(GUICtrlRead($idCheckbox_GNR_ResultOut), $GUI_CHECKED) = $GUI_CHECKED Then
-				$bDisplayResultToResultTab = True
-			Else
-				$bDisplayResultToResultTab = False
-			EndIf
-			IniWrite($sIni_Patch, "General", "DisplayResultToResultTab", $bDisplayResultToResultTab)
 		Case $idCheckbox_GNR_AlwaysOnTop	;------------------------------------------- Always on Top
 			If BitAND(GUICtrlRead($idCheckbox_GNR_AlwaysOnTop), $GUI_CHECKED) = $GUI_CHECKED Then
 				WinSetOnTop($hGUI_App, "", 1)
@@ -475,7 +461,7 @@ EndFunc
 Func _Create_INI_File()
 	IniWriteSection($sIni_Patch, "GUI", "GUIWindowPosition_X=" & @LF & "GUIWindowPosition_Y=")
 	IniWriteSection($sIni_Patch, "Result", "FontResult=Segoe UI" & @LF & "FontSizeResult=10")
-	IniWriteSection($sIni_Patch, "General", "PutResultToClipboard=True" & @LF & "DisplayResultToResultTab=True" & @LF & "AlwaysOnTop=False" & @LF & "TrayIconAction=0")
+	IniWriteSection($sIni_Patch, "General", "PutResultToClipboard=True" & @LF & "AlwaysOnTop=False" & @LF & "TrayIconAction=0")
 	IniWriteSection($sIni_Patch, "APIKey", "OCRAPIKey=" & @LF & "TranslateAPIKey=AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw")
 	IniWriteSection($sIni_Patch, "Hotkey", "OCRHotkeyCode=" & @LF & "TranslateHotkeyCode=")
 	IniWriteSection($sIni_Patch, "Language", "TargetLanguage=")
@@ -487,7 +473,6 @@ Func _Read_Settings()
 	$sFontResult = IniRead($sIni_Patch, "Result", "FontResult", "Segoe UI")
 	$iFontSizeResult = IniRead($sIni_Patch, "Result", "FontSizeResult", 10)
 	$sPutResultToClipboard = IniRead($sIni_Patch, "General", "PutResultToClipboard", "True")
-	$sDisplayResultToResultTab = IniRead($sIni_Patch, "General", "DisplayResultToResultTab", "True")
 	$sAlwaysOnTop = IniRead($sIni_Patch, "General", "AlwaysOnTop", "False")
 	$iTrayIconAction = IniRead($sIni_Patch, "General", "TrayIconAction", 0)
 	$sOCRAPIKey = IniRead($sIni_Patch, "APIKey", "OCRAPIKey", "")
@@ -966,22 +951,20 @@ Func _OCR_and_Translate_Tray_Function()
 		ClipPut($sTranslateOutText)
 	EndIf
 
-	If $bDisplayResultToResultTab Then
-		Local $iState = WinGetState($hGUI_App)
-		If BitAND($iState, $WIN_STATE_MINIMIZED) Then
-			WinSetState($hGUI_App, "", @SW_RESTORE)
-		EndIf
-		GUICtrlSetData($idEdit_RSLT, $sTranslateOutText)
-		GUISetState(@SW_SHOW, $hGUI_App)
-		If $iLastTab = 3 Then
-			ControlHide($hGUI_App, "", $hInput_HK_HotKeyOCR)
-			ControlHide($hGUI_App, "", $hInput_HK_HotKeyTrans)
-		EndIf
-		GUICtrlSetState($hTabResult, $GUI_SHOW)
-		$iLastTab = 0
-		WinActivate($hGUI_App)
-		;-------------------------->>>	set focus?
+	Local $iState = WinGetState($hGUI_App)
+	If BitAND($iState, $WIN_STATE_MINIMIZED) Then
+		WinSetState($hGUI_App, "", @SW_RESTORE)
 	EndIf
+	GUICtrlSetData($idEdit_RSLT, $sTranslateOutText)
+	GUISetState(@SW_SHOW, $hGUI_App)
+	If $iLastTab = 3 Then
+		ControlHide($hGUI_App, "", $hInput_HK_HotKeyOCR)
+		ControlHide($hGUI_App, "", $hInput_HK_HotKeyTrans)
+	EndIf
+	GUICtrlSetState($hTabResult, $GUI_SHOW)
+	$iLastTab = 0
+	WinActivate($hGUI_App)
+	;-------------------------->>>	set focus?
 EndFunc	;==>_OCR_and_Translate_Tray_Function
 ;-----------------------------------------------------------------------OCR IN TRAY MENU
 Func _Only_OCR_Tray_Function()
@@ -1004,22 +987,20 @@ Func _Only_OCR_Tray_Function()
 		ClipPut($sOCR_OutText)
 	EndIf
 
-	If $bDisplayResultToResultTab Then
-		Local $iState = WinGetState($hGUI_App)
-		If BitAND($iState, $WIN_STATE_MINIMIZED) Then
-			WinSetState($hGUI_App, "", @SW_RESTORE)
-		EndIf
-		GUICtrlSetData($idEdit_RSLT, $sOCR_OutText)
-		GUISetState(@SW_SHOW, $hGUI_App)
-		If $iLastTab = 3 Then
-			ControlHide($hGUI_App, "", $hInput_HK_HotKeyOCR)
-			ControlHide($hGUI_App, "", $hInput_HK_HotKeyTrans)
-		EndIf
-		GUICtrlSetState($hTabResult, $GUI_SHOW)
-		$iLastTab = 0
-		WinActivate($hGUI_App)
-		;-------------------------->>>	set focus?
+	Local $iState = WinGetState($hGUI_App)
+	If BitAND($iState, $WIN_STATE_MINIMIZED) Then
+		WinSetState($hGUI_App, "", @SW_RESTORE)
 	EndIf
+	GUICtrlSetData($idEdit_RSLT, $sOCR_OutText)
+	GUISetState(@SW_SHOW, $hGUI_App)
+	If $iLastTab = 3 Then
+		ControlHide($hGUI_App, "", $hInput_HK_HotKeyOCR)
+		ControlHide($hGUI_App, "", $hInput_HK_HotKeyTrans)
+	EndIf
+	GUICtrlSetState($hTabResult, $GUI_SHOW)
+	$iLastTab = 0
+	WinActivate($hGUI_App)
+	;-------------------------->>>	set focus?
 EndFunc	;==>_Only_OCR_Tray_Function
 ;-----------------------------------------------------------------------RESULT IN TRAY MENU
 Func _Result_Tray_Function()
@@ -1256,7 +1237,6 @@ Func _SendTo_OCR_Service($sWindowsFullPathToImageFile)
 	WEnd
 	;-----------------------------------------------------------------curl Error
 	Local $iCurlErrorDetect, $asCurlError
-
 	$iCurlErrorDetect = StringRegExp($sStdErr, $sRegexCurlError)
 	If $iCurlErrorDetect = 1 Then
 		$asCurlError = StringRegExp($sStdErr, $sRegexCurlError, $STR_REGEXPARRAYMATCH)
