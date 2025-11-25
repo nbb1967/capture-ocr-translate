@@ -8,11 +8,8 @@ Powered by [AutoIt](https://www.autoitscript.com/site/), [curl](https://curl.se/
 No installation required. Free. Provided "as is," without any warranties.
 
 
-
 ![Capture-OCR-Translate GUI](https://i.ibb.co/qMjRH837/GUI-EN.png)
 
 
-
 ------
-
 2025 © NyBumBum
