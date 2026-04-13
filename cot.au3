@@ -2,12 +2,12 @@
 #AutoIt3Wrapper_Icon=ico\white-be.ico
 #AutoIt3Wrapper_Outfile=COT.exe
 #AutoIt3Wrapper_Res_Description=Utility for recognizing and translating text captured from the screen...
-#AutoIt3Wrapper_Res_Fileversion=0.9.2.54
+#AutoIt3Wrapper_Res_Fileversion=0.9.3.67
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=Capture-OCR-Translate
-#AutoIt3Wrapper_Res_ProductVersion=0.9.2
+#AutoIt3Wrapper_Res_ProductVersion=0.9.3
 #AutoIt3Wrapper_Res_CompanyName=NyBumBum
-#AutoIt3Wrapper_Res_LegalCopyright=Copyright © NyBumBum 2025
+#AutoIt3Wrapper_Res_LegalCopyright=Copyright © NyBumBum 2025–2026
 #AutoIt3Wrapper_Res_Language=1033
 #AutoIt3Wrapper_Res_Icon_Add=ico\white-24-16.ico
 #AutoIt3Wrapper_Res_Icon_Add=ico\black-24-16.ico
@@ -20,7 +20,7 @@
 
 
 ;Hey! Don't forget to replace the cursor in Resource Hacker....
-;Don't forget to change the version in About....
+;Don't forget to change the YEAR in the copyright ABOVE and in the About tab...
 
 
 #include <Array.au3>
@@ -33,7 +33,6 @@
 #include <GUIConstants.au3>
 #include <GUIConstantsEx.au3>
 #include <GuiEdit.au3>
-#include <include\GuiHotkey.au3> ;(UDF by Mat)
 #include <GuiMenu.au3>
 #include <Misc.au3>
 #include <ScreenCapture.au3>
@@ -45,6 +44,7 @@
 #include <WinAPIRes.au3>
 #include <WinAPISys.au3>
 #include <WinAPISysWin.au3>
+#include "include\GuiHotkey.au3" ; UDF by @Mat
 
 ;-----------------------------------------------------------------------CHECKING IF ALREADY RUNNING
 if _Singleton("Capture_OCR_Translate", 1) = 0 Then
@@ -57,11 +57,12 @@ Opt('GUIEventOptions', 1)	;for Saving Window Position on minimize
 Opt("TrayOnEventMode", 1)
 Opt("TrayMenuMode", 1+2+4)
 
-Global Const $sRegexCurlError = '(curl:\s\([0-9]{1,2}\).*)$'
+Global Const $sRegexCurlError = '(curl:\s\([0-9]+\).*)'
 Global $bNeedAPIKey = False
 Global $idSelectAll	; for castom menu
 Global $hEdit, $hInput
 Global $hCursorArrow, $hMyCursor
+Global $sSystemProxy = _GetSystemProxyForCurl()
 
 Global $sPng_Path = @TempDir & "\tmp.png"
 Global $sJpg_Path = @TempDir & "\tmp.jpg"
@@ -86,7 +87,7 @@ Func _GetStrRes($iStringID)
 		Exit
 	EndIf
 	Return $iString
-EndFunc   ;==>_GetStringFromResources
+EndFunc   ;==>_GetStrRes
 ;------------------------------------
 Global Enum $eAppName, $eTabResult, $eTabGeneral, $eTabAPIKey, $eTabHotkey, $eTabLanguage, $eTabAbout
 Global $asArrayGUI_App[7] = [6000, 6001, 6002, 6003, 6004, 6005, 6006]
@@ -128,6 +129,7 @@ Global $sIni_Patch = @ScriptDir & "\settings.ini"
 Global $iWidth_GUI = 490, $iHeight_GUI = 300
 Global $iWinPos_X, $iWinPos_Y, $sFontResult, $iFontSizeResult, $sPutResultToClipboard, $sAlwaysOnTop, $iTrayIconAction, $sOCRAPIKey, $sTranslateAPIKey, $sOCRHotkey, $iOCRHotkeyCode, $sTranslateHotkey, $iTransHotkeyCode, $sTargetLanguage
 Global $bPutResultToClipboard, $bAlwaysOnTop
+
 Global $aisArrayLanguageCodes[191][2] = [[4,"zh-CN"],[1025,"ar"],[1026,"bg"],[1027,"ca"],[1028,"zh-TW"],[1029,"cs"],[1030,"da"],[1031,"de"],[1032,"el"],[1033,"en"],[1034,"es"],[1035,"fi"],[1036,"fr"],[1037,"he"],[1038,"hu"],[1039,"is"],[1040,"it"],[1041,"ja"],[1042,"ko"],[1043,"nl"],[1044,"no"],[1045,"pl"],[1046,"pt"],[1048,"ro"],[1049,"ru"],[1050,"hr"],[1051,"sk"],[1052,"sq"],[1053,"sv"],[1054,"th"],[1055,"tr"],[1056,"ur"],[1057,"id"],[1058,"uk"],[1059,"be"],[1060,"sl"],[1061,"et"],[1062,"lv"],[1063,"lt"],[1064,"tg"],[1065,"fa"],[1066,"vi"],[1067,"hy"],[1068,"az"],[1069,"eu"],[1071,"mk"],[1074,"tn"],[1076,"xh"],[1077,"zu"],[1078,"af"],[1079,"ka"],[1081,"hi"],[1082,"mt"],[1086,"ms"],[1087,"kk"],[1088,"ky"],[1089,"sw"],[1090,"tk"],[1091,"uz"],[1092,"tt"],[1093,"bn"],[1094,"pa"],[1095,"gu"],[1096,"or"],[1097,"ta"],[1098,"te"],[1099,"kn"],[1100,"ml"],[1101,"as"],[1102,"mr"],[1103,"sa"],[1104,"mn"],[1106,"cy"],[1107,"km"],[1108,"lo"],[1110,"gl"],[1111,"gom"],[1115,"si"],[1118,"am"],[1121,"ne"],[1122,"fy"],[1123,"ps"],[1124,"tl"],[1125,"dv"],[1128,"ha"],[1130,"yo"],[1131,"qu"],[1132,"nso"],[1133,"ba"],[1134,"lb"],[1136,"ig"],[1139,"ti"],[1141,"haw"],[1150,"br"],[1152,"ug"],[1153,"mi"],[1154,"oc"],[1155,"co"],[1159,"rw"],[1169,"gd"],[1170,"ku"],[2049,"ar"],[2051,"ca"],[2052,"zh-CN"],[2055,"de"],[2057,"en"],[2058,"es"],[2060,"fr"],[2064,"it"],[2067,"nl"],[2068,"no"],[2070,"pt-PT"],[2077,"sv"],[2080,"ur"],[2092,"az"],[2098,"tn"],[2108,"ga"],[2110,"ms"],[2117,"bn"],[2118,"pa-Arab"],[2121,"ta"],[2128,"mn"],[2137,"sd"],[2151,"ff"],[2155,"qu"],[2163,"ti"],[3073,"ar"],[3076,"zh-HK"],[3079,"de"],[3081,"en"],[3082,"es"],[3084,"fr"],[3098,"sr"],[3179,"qu"],[4097,"ar"],[4100,"zh-CN"],[4103,"de"],[4105,"en"],[4106,"es"],[4108,"fr"],[4122,"hr"],[5121,"ar"],[5124,"zh-TW"],[5127,"de"],[5129,"en"],[5130,"es"],[5132,"fr"],[5146,"bs"],[6145,"ar"],[6153,"en"],[6154,"es"],[6156,"fr"],[7169,"ar"],[7177,"en"],[7178,"es"],[7194,"sr"],[8193,"ar"],[8201,"en"],[8202,"es"],[9217,"ar"],[9225,"en"],[9226,"es"],[10241,"ar"],[10249,"en"],[10250,"es"],[10266,"sr"],[11265,"ar"],[11273,"en"],[11274,"es"],[12289,"ar"],[12297,"en"],[12298,"es"],[12314,"sr"],[13313,"ar"],[13321,"en"],[13322,"es"],[14337,"ar"],[14346,"es"],[15361,"ar"],[15370,"es"],[16385,"ar"],[16393,"en"],[16394,"es"],[17417,"en"],[17418,"es"],[18441,"en"],[18442,"es"],[19466,"es"],[20490,"es"],[21514,"es"],[31748,"zh-TW"]]
 
 _FixAccelHotKeyLayout()
@@ -200,7 +202,8 @@ $idLabel_API_Description = GUICtrlCreateLabel(_GetStrRes($asArrayTabAPIKey[$eDes
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
 $idButton_API_GetOCRAPIKey = GUICtrlCreateButton(_GetStrRes($asArrayTabAPIKey[$eGetOCRAPIKey]), 34, 116, 205, 31)			;"Get API Key"
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
-$idInput_API_OCRAPIKey = GUICtrlCreateInput("", 252, 119, 205, 25, BitOR($GUI_SS_DEFAULT_INPUT,$ES_RIGHT))
+$idInput_API_OCRAPIKey = GUICtrlCreateInput("", 252, 119, 205, 25, BitOR($GUI_SS_DEFAULT_INPUT,$ES_RIGHT,$ES_UPPERCASE))
+GUICtrlSetLimit($idInput_API_OCRAPIKey, 15)
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
 If Not ($sOCRAPIKey == "") Then
 	GUICtrlSetData(-1, $sOCRAPIKey)
@@ -232,35 +235,39 @@ GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
 $hInput_HK_HotKeyOCR = _GUICtrlHotkey_Create($hGUI_App, 257, 50, 200, 25)
 _GUICtrlHotkey_SetRules($hInput_HK_HotKeyOCR, BitOR($HKCOMB_S, $HKCOMB_NONE), $HOTKEYF_ALT)
 _GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyOCR, $iOCRHotkeyCode)
-$sOCRHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyOCR)
+
 If $iOCRHotkeyCode <> 0 Then
 	_Registration_Hotkey_OCR()
+	If @error Then
+		$iOCRHotkeyCode = 0
+		_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyOCR, $iOCRHotkeyCode)
+		IniWrite($sIni_Patch, "Hotkey", "OCRHotkeyCode", $iOCRHotkeyCode)
+		$bNeedHotKey = True
+	EndIf
 EndIf
-If @error Then
-	$iOCRHotkeyCode = 0
-	_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyOCR, $iOCRHotkeyCode)
-	IniWrite($sIni_Patch, "Hotkey", "OCRHotkeyCode", $iOCRHotkeyCode)
-	$bNeedHotKey = True
-EndIf
+$sOCRHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyOCR)
+
 ControlHide($hGUI_App, "", $hInput_HK_HotKeyOCR)
 ;-------------
 $idLabel_HK_HotKeyTrans = GUICtrlCreateLabel(_GetStrRes($asArrayTabHotkey[$eTransHotkey]), 34, 88, 210, 21, $SS_RIGHT)		;"Hotkey for translation:"
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
 $hInput_HK_HotKeyTrans = _GUICtrlHotkey_Create($hGUI_App, 257, 86, 200, 25)
 _GUICtrlHotkey_SetRules($hInput_HK_HotKeyTrans, BitOR($HKCOMB_S, $HKCOMB_NONE), $HOTKEYF_ALT)
-
 _GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyTrans, $iTransHotkeyCode)
-$sTranslateHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyTrans)
+
 If $iTransHotkeyCode <> 0 Then
 	_Registration_Hotkey_Translate()
+	If @error Then
+		$iTransHotkeyCode = 0
+		_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyTrans, $iTransHotkeyCode)
+		IniWrite($sIni_Patch, "Hotkey", "TranslateHotkeyCode", $iTransHotkeyCode)
+		$bNeedHotKey = True
+	EndIf
 EndIf
-If @error Then
-	$iTransHotkeyCode = 0
-	_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyTrans, $iTransHotkeyCode)
-	IniWrite($sIni_Patch, "Hotkey", "TranslateHotkeyCode", $iTransHotkeyCode)
-	$bNeedHotKey = True
-EndIf
+$sTranslateHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyTrans)
+
 ControlHide($hGUI_App, "", $hInput_HK_HotKeyTrans)
+;--------------
 $idLabel_HK_Tip = GUICtrlCreateLabel(_GetStrRes($asArrayTabHotkey[$eTipHotkey]), 34, 121, 423, 81)							;"Single characters and Shift-only characters are blocked to prevent software functions from running while typing. Please show a little imagination..."
 ;--------------
 $idLabel_HK_Hr = GUICtrlCreateLabel("", 11, 238, 466, 1)
@@ -289,9 +296,9 @@ $idIcon_ABT = GUICtrlCreateIcon(@ScriptFullPath, 99, 404, 44, 48, 48)
 $idLabel_ABT_AppName = GUICtrlCreateLabel(_GetStrRes($asArrayGUI_App[$eAppName]), 34, 52, 323, 41)							;"Capture-OCR-Translate"
 GUICtrlSetFont(-1, 20, 800, 0, "Segoe UI")
 GUICtrlSetColor(-1, 0xD9D9D9)
-$idLabel_ABT_Version = GUICtrlCreateLabel("0.9.2", 34, 110, 350, 21)														;"X.X.X"----------------------------------->>>>>>>       !
+$idLabel_ABT_Version = GUICtrlCreateLabel(FileGetVersion(@ScriptFullPath, "ProductVersion"), 34, 110, 350, 21)
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
-$idLabel_ABT_Copyright = GUICtrlCreateLabel(_GetStrRes($asArrayTabAbout[$eCopyright]), 34, 131, 350, 21)					;"Copyright © NyBumBum 2025"
+$idLabel_ABT_Copyright = GUICtrlCreateLabel(_GetStrRes($asArrayTabAbout[$eCopyright]), 34, 131, 350, 21)					;"Copyright © NyBumBum 2025–2026"
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
 $idLabel_ABT_Mail = GUICtrlCreateLabel("nybumbum@gmail.com", 34, 152, 350, 21)												;"nybumbum@gmail.com"
 GUICtrlSetFont(-1, 10, 400, 0, "Segoe UI")
@@ -506,13 +513,16 @@ Func _WindowProc($hWnd, $Msg, $wParam, $lParam)
 		Case $hInput
 			Switch $Msg
 				Case $WM_CONTEXTMENU
+					_WinAPI_SetFocus($hWnd)
 					_ActivityContextMenuItem_Input()
-					_GUICtrlMenu_TrackPopupMenu($hContextMenu_Input, $wParam)
+					; $wParam in WM_CONTEXTMENU — this is the HWND of the control
+					_GUICtrlMenu_TrackPopupMenu($hContextMenu_Input, $hWnd)
 					Return 1
 				Case $WM_COMMAND
-					Switch $wParam
+					Local $nID = BitAND($wParam, 0xFFFF) ; Extract the command ID from the message
+					Switch $nID
 						Case $WM_CUT, $WM_COPY, $WM_PASTE, $WM_CLEAR
-							_SendMessage($hWnd, $wParam)
+							_SendMessage($hWnd, $nID)
 						Case $idSelectAll
 							_SendMessage($hWnd, $EM_SETSEL, 0, -1)
 					EndSwitch
@@ -523,13 +533,16 @@ Func _WindowProc($hWnd, $Msg, $wParam, $lParam)
 		Case $hEdit
 			Switch $Msg
 				Case $WM_CONTEXTMENU
+					_WinAPI_SetFocus($hWnd)
 					_ActivityContextMenuItem_Edit()
-					_GUICtrlMenu_TrackPopupMenu($hContextMenu_Edit, $wParam)
+					; $wParam in WM_CONTEXTMENU — this is the HWND of the control
+					_GUICtrlMenu_TrackPopupMenu($hContextMenu_Edit, $hWnd)
 					Return 1
 				Case $WM_COMMAND
-					Switch $wParam
+					Local $nID = BitAND($wParam, 0xFFFF) ; Extract the command ID from the message
+					Switch $nID
 						Case $WM_COPY
-							_SendMessage($hWnd, $wParam)
+							_SendMessage($hWnd, $nID)
 						Case $idSelectAll
 							_SendMessage($hWnd, $EM_SETSEL, 0, -1)
 					EndSwitch
@@ -553,57 +566,52 @@ EndFunc   ;==>_Fill_Combobox_TrayIconAction
 ;----------------------------------------------------------------------CHECK API KEY
 Func _Check_OCRAPIKey()
 	Local $s_tmp_OCRAPIKey
-	Local Const $sRegexOCRAPIKey = '(?i)([K][0-9]{14})'
-	Local Const $sRegexOCRAPIKey_Pro = '(?i)([A-Z][A-Z0-9]{12})'
-	Local $iOCRAPIKeyLength, $iOCRAPIKeyCorrectness
+	Local Const $sRegexOCRAPIKey = '(?-i)(K[0-9]{14})'
+	Local Const $sRegexOCRAPIKey_Pro = '(?-i)([A-Z][A-Z0-9]{12})'
+	Local $iOCRAPIKeyLength, $bOCRAPIKeyCorrectness
 
 	$s_tmp_OCRAPIKey = GUICtrlRead($idInput_API_OCRAPIKey)
 	If $sOCRAPIKey == $s_tmp_OCRAPIKey Then
 		Return
 	EndIf
 
-	$iOCRAPIKeyLength = StringLen($s_tmp_OCRAPIKey)
-	Switch $iOCRAPIKeyLength
-		Case 15
-			$iOCRAPIKeyCorrectness = StringRegExp($s_tmp_OCRAPIKey, $sRegexOCRAPIKey)
-			If $iOCRAPIKeyCorrectness = 1 Then
-				$sOCRAPIKey = $s_tmp_OCRAPIKey
-				Local $bSuccess = IniWrite($sIni_Patch, "APIKey", "OCRAPIKey", $sOCRAPIKey)
-				If $bSuccess = 1 Then
-					MsgBox(0, "", _GetStrRes($asArrayMsg_API[$eAPI_Success]))												;"Free OCR API Key saved successfully."
-					$bNeedAPIKey = False
-				Else
-					MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_API[$eAPI_Failed]))	;"Error"	"Failed to save Free OCR API Key."
-					SetError(14)
-				EndIf
-				Return
-			EndIf
-		Case 13
-			$iOCRAPIKeyCorrectness = StringRegExp($s_tmp_OCRAPIKey, $sRegexOCRAPIKey_Pro)
-			If $iOCRAPIKeyCorrectness = 1 Then
-				MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_API[$eAPI_ProKey]))		;"Error"	"You probably entered a PRO/PRO PDF key. Unfortunately, this program currently only supports Free OCR keys."
-				SetError(15)
-				Return
-			EndIf
-	EndSwitch
-	MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_API[$eAPI_NonCorrectKey]))			;"Error"	"Please make sure you have entered a valid API key for Free OCR."
-	SetError(16)
-	Return
+	$bOCRAPIKeyCorrectness = StringRegExp($s_tmp_OCRAPIKey, $sRegexOCRAPIKey)
+	If $bOCRAPIKeyCorrectness Then
+		Local $bSuccess = IniWrite($sIni_Patch, "APIKey", "OCRAPIKey", $s_tmp_OCRAPIKey)
+		If $bSuccess Then
+			$sOCRAPIKey = $s_tmp_OCRAPIKey
+			MsgBox(0, "", _GetStrRes($asArrayMsg_API[$eAPI_Success]))														;"Free OCR API Key saved successfully."
+			$bNeedAPIKey = False
+		Else
+			MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_API[$eAPI_Failed]))			;"Error"	"Failed to save Free OCR API Key."
+			SetError(14)
+		EndIf
+		Return
+	Else
+		$bOCRAPIKeyCorrectness = StringRegExp($s_tmp_OCRAPIKey, $sRegexOCRAPIKey_Pro)
+		If $bOCRAPIKeyCorrectness And (StringLen($s_tmp_OCRAPIKey) = 13) Then
+			MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_API[$eAPI_ProKey]))			;"Error"	"You probably entered a PRO/PRO PDF key. Unfortunately, this program currently only supports Free OCR keys."
+			SetError(15)
+			Return
+		Else
+			MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_API[$eAPI_NonCorrectKey]))	;"Error"	"Please make sure you have entered a valid API key for Free OCR."
+			SetError(16)
+			Return
+		EndIf
+	EndIf
 EndFunc
 ;----------------------------------------------------------------------DOWNLOAD TRANSLATION LANGUAGE LIST
 Func _Download_Translation_Language_List($sGoogleLangID)
-Local $sCurlCmd = 'curl --ssl-no-revoke -X GET "https://translation.googleapis.com/language/translate/v2/languages?key=' & $sTranslateAPIKey & '&target=' & $sGoogleLangID  & '"'
+Local $sCurlCmd = 'curl' & $sSystemProxy & ' --ssl-no-revoke -X GET "https://translation.googleapis.com/language/translate/v2/languages?key=' & $sTranslateAPIKey & '&target=' & $sGoogleLangID  & '"'
 Local $iPID = Run($sCurlCmd, "", "", BitOR($STDERR_CHILD, $STDOUT_CHILD))
 ;-----------------------------------------------------------------------
 Local $hTimer = TimerInit()
 Local $sStdErr = ""
-While 1 And Sleep(20)
+While Sleep(20)
 	$sStdErr &= StderrRead($iPID)
-	If @error Then
-		ExitLoop
-	EndIf
-	$fDiff = TimerDiff($hTimer)
-	If $fDiff > 30000 Then
+	If @error Then ExitLoop
+	If TimerDiff($hTimer) > 30000 Then
+		ProcessClose($iPID)
 		MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eTimeoutError]), _GetStrRes($asArrayMsg_Translate[$eTransTimeout]))	;"Timeout Error"	"The Translation provider did not respond within 30 seconds."
 		SetError(14)
 		Return
@@ -640,8 +648,8 @@ Local $iListDetect = StringRegExp($sJSON_LangugeName, $sRegex_JSON_Split)
 If $iListDetect = 1 Then
 	Local $asArraySplitList = StringRegExp($sJSON_LangugeName, $sRegex_JSON_Split, $STR_REGEXPARRAYGLOBALMATCH)
 	Local $imax = UBound($asArraySplitList, $UBOUND_ROWS) - 1
-	Local Const $sRegexLanguageCode = '(?:\"language\":\s\")([^\"]*)'
-	Local Const $sRegexLanguageName = '(?:\"name\":\s\")([^\"]*)'
+	Local Const $sRegexLanguageCode = '\"language\":\s\"([^\"]*)'
+	Local Const $sRegexLanguageName = '\"name\":\s\"([^\"]*)'
 	Local $asArrayLanguageCodeAndName[$imax + 1][2]
 	Local $iCodeDetect, $iNameDetect
 
@@ -785,93 +793,98 @@ Func _Check_Hotkeys()
 EndFunc   ;==>_Check_Hotkeys
 ;----------------------------------------------------------------------CHECK OCR HOTKEY
 Func _Check_OCR_HK($i_tmp_OCRHotkeyCode)
-	Select
-		Case $i_tmp_OCRHotkeyCode = $iOCRHotkeyCode									;nothing happened
-			Return
-		Case $i_tmp_OCRHotkeyCode = 0 And $iOCRHotkeyCode <> 0						;remove hotkey
+	If $i_tmp_OCRHotkeyCode = $iOCRHotkeyCode Then										;nothing happened
+		Return
+	Else
+		If $i_tmp_OCRHotkeyCode = 0 And $iOCRHotkeyCode <> 0 Then						;remove hotkey
 			_Unregistration_Hotkey_OCR()
-			If Not @error Then
-				$iOCRHotkeyCode = $i_tmp_OCRHotkeyCode
-				IniWrite($sIni_Patch, "Hotkey", "OCRHotkeyCode", $iOCRHotkeyCode)
-				MsgBox(0, "", _GetStrRes($asArrayMsg_Hotkey[$eOCR_Removed]))								;"Hotkey for OCR successfully removed."
-				$sOCRHotkey = ""
-			EndIf
-			Return
-		Case $i_tmp_OCRHotkeyCode <> 0 And $iOCRHotkeyCode = 0						;create hotkey
-			_Registration_Hotkey_OCR()
-			If Not @error Then
-				$iOCRHotkeyCode = $i_tmp_OCRHotkeyCode
-				IniWrite($sIni_Patch, "Hotkey", "OCRHotkeyCode", $iOCRHotkeyCode)
-				MsgBox(0, "", _GetStrRes($asArrayMsg_Hotkey[$eOCR_Saved]))									;"Hotkey for OCR successfully saved."
-				$sOCRHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyOCR)
-			EndIf
-			Return
-		Case $i_tmp_OCRHotkeyCode <> 0 And $iOCRHotkeyCode <> 0						;change hotkey
-			_Unregistration_Hotkey_OCR()
-			If @error Then
+			if @error Then
+				_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyOCR, $iOCRHotkeyCode)
 				Return
 			Else
-				$iOCRHotkeyCode = 0
-				$sOCRHotkey = ""
-				IniWrite($sIni_Patch, "Hotkey", "OCRHotkeyCode", $iOCRHotkeyCode)
+				IniWrite($sIni_Patch, "Hotkey", "OCRHotkeyCode", $i_tmp_OCRHotkeyCode)
+				MsgBox(0, "", _GetStrRes($asArrayMsg_Hotkey[$eOCR_Removed]))								;"Hotkey for OCR successfully removed."
+				$iOCRHotkeyCode = $i_tmp_OCRHotkeyCode ; 0
+				$sOCRHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyOCR) ; ""
+				Return
 			EndIf
+		ElseIf $i_tmp_OCRHotkeyCode <> 0 And $iOCRHotkeyCode = 0 Then					;create hotkey
 			_Registration_Hotkey_OCR()
-			If Not @error Then
+			If @error Then
+				_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyOCR, $iOCRHotkeyCode)
+				Return
+			Else
+				IniWrite($sIni_Patch, "Hotkey", "OCRHotkeyCode", $i_tmp_OCRHotkeyCode)
+				MsgBox(0, "", _GetStrRes($asArrayMsg_Hotkey[$eOCR_Saved]))									;"Hotkey for OCR successfully saved."
 				$iOCRHotkeyCode = $i_tmp_OCRHotkeyCode
-				IniWrite($sIni_Patch, "Hotkey", "OCRHotkeyCode", $iOCRHotkeyCode)
-				MsgBox(0, "", _GetStrRes($asArrayMsg_Hotkey[$eOCR_Changed]))								;"Hotkey for OCR successfully changed."
+				$sOCRHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyOCR)
+				Return
+			EndIf
+		ElseIf $i_tmp_OCRHotkeyCode <> 0 And $iOCRHotkeyCode <> 0 Then					;change hotkey
+			_Registration_Hotkey_OCR()
+			If @error Then
+				_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyOCR, $iOCRHotkeyCode)
+				Return
+			Else
+				_Unregistration_Hotkey_OCR()
+				IniWrite($sIni_Patch, "Hotkey", "OCRHotkeyCode", $i_tmp_OCRHotkeyCode)						;"Hotkey for OCR successfully changed."
+				MsgBox(0, "", _GetStrRes($asArrayMsg_Hotkey[$eOCR_Changed]))
+				$iOCRHotkeyCode = $i_tmp_OCRHotkeyCode
 				$sOCRHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyOCR)
 			EndIf
-	EndSelect
+		EndIf
+	EndIf
 EndFunc   ;==>_Check_OCR_HK
 ;----------------------------------------------------------------------CHECK TRANSLATE HOTKEY
 Func _Check_Trans_HK($i_tmp_TransHotkeyCode)
-	Select
-		Case $i_tmp_TransHotkeyCode = $iTransHotkeyCode								;nothing happened
-			Return
-		Case $i_tmp_TransHotkeyCode = 0 And $iTransHotkeyCode <> 0					;remove hotkey
-			_Unregistration_Hotkey_Translate()
-			If Not @error Then
-				$iTransHotkeyCode = $i_tmp_TransHotkeyCode
-				IniWrite($sIni_Patch, "Hotkey", "TranslateHotkeyCode", $iTransHotkeyCode)
-				MsgBox(0, "", _GetStrRes($asArrayMsg_Hotkey[$eTrans_Removed]))								;"Hotkey for translation successfully removed."
-				$sTranslateHotkey = ""
-			EndIf
-			Return
-		Case $i_tmp_TransHotkeyCode <> 0 And $iTransHotkeyCode = 0					;create hotkey
-			_Registration_Hotkey_Translate()
-			If Not @error Then
-				$iTransHotkeyCode = $i_tmp_TransHotkeyCode
-				IniWrite($sIni_Patch, "Hotkey", "TranslateHotkeyCode", $iTransHotkeyCode)
-				MsgBox(0, "", _GetStrRes($asArrayMsg_Hotkey[$eTrans_Saved]))								;"Hotkey for translation successfully saved."
-				$sTranslateHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyTrans)
-			EndIf
-			Return
-		Case $i_tmp_TransHotkeyCode <> 0 And $iTransHotkeyCode <> 0					;change hotkey
+	If $i_tmp_TransHotkeyCode = $iTransHotkeyCode Then									;nothing happened
+		Return
+	Else
+		If $i_tmp_TransHotkeyCode = 0 And $iTransHotkeyCode <> 0 Then					;remove hotkey
 			_Unregistration_Hotkey_Translate()
 			If @error Then
+				_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyTrans, $iTransHotkeyCode)
 				Return
 			Else
-				$iTransHotkeyCode = 0
-				$sTranslateHotkey = ""
-				IniWrite($sIni_Patch, "Hotkey", "TranslateHotkeyCode", $iTransHotkeyCode)
+				IniWrite($sIni_Patch, "Hotkey", "TranslateHotkeyCode", $i_tmp_TransHotkeyCode)
+				MsgBox(0, "", _GetStrRes($asArrayMsg_Hotkey[$eTrans_Removed]))								;"Hotkey for translation successfully removed."
+				$iTransHotkeyCode = $i_tmp_TransHotkeyCode ; 0
+				$sTranslateHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyTrans) ; ""
+				Return
 			EndIf
+		ElseIf $i_tmp_TransHotkeyCode <> 0 And $iTransHotkeyCode = 0 Then				;create hotkey
 			_Registration_Hotkey_Translate()
-			If Not @error Then
+			If @error Then
+				_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyTrans, $iTransHotkeyCode)
+				Return
+			Else
+				IniWrite($sIni_Patch, "Hotkey", "TranslateHotkeyCode", $i_tmp_TransHotkeyCode)
+				MsgBox(0, "", _GetStrRes($asArrayMsg_Hotkey[$eTrans_Saved]))								;"Hotkey for translation successfully saved."
 				$iTransHotkeyCode = $i_tmp_TransHotkeyCode
-				IniWrite($sIni_Patch, "Hotkey", "TranslateHotkeyCode", $iTransHotkeyCode)
+				$sTranslateHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyTrans)
+				Return
+			EndIf
+		ElseIf $i_tmp_TransHotkeyCode <> 0 And $iTransHotkeyCode <> 0 Then				;change hotkey
+			_Registration_Hotkey_Translate()
+			If @error Then
+				_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyTrans, $iTransHotkeyCode)
+				Return
+			Else
+				_Unregistration_Hotkey_Translate()
+				IniWrite($sIni_Patch, "Hotkey", "TranslateHotkeyCode", $i_tmp_TransHotkeyCode)
 				MsgBox(0, "", _GetStrRes($asArrayMsg_Hotkey[$eTrans_Changed]))								;"Hotkey for translation successfully changed."
+				$iTransHotkeyCode = $i_tmp_TransHotkeyCode
 				$sTranslateHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyTrans)
 			EndIf
-	EndSelect
+		EndIF
+	EndIf
 EndFunc   ;==>_Check_Trans_HK
 ;----------------------------------------------------------------------REGISTRATION OCR HOTKEY
 Func _Registration_Hotkey_OCR()
 	Local $s_TMP_OCRHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyOCR)
 	Local $bSuccess = HotKeySet(StringLower($s_TMP_OCRHotkey), "_Only_OCR_Hotkey_Function")
 	If Not $bSuccess Then
-		_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyOCR, $iOCRHotkeyCode)
-		MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_Hotkey[$eOCRFailed_Reg]))					;"Error"	"Hotkey for OCR could not be registered in Windows (they may be in use by another program). Try using a different hotkey for OCR."
+		MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_Hotkey[$eOCRFailed_Reg]))		;"Error"	"Hotkey for OCR could not be registered in Windows (they may be in use by another program). Try using a different hotkey for OCR."
 		SetError(17)
 	EndIf
 EndFunc   ;==>_Registration_Hotkey_OCR
@@ -880,8 +893,7 @@ Func _Registration_Hotkey_Translate()
 	Local $s_TMP_TransHotkey = _GUICtrlHotkey_GetHotkey($hInput_HK_HotKeyTrans)
 	Local $bSuccess = HotKeySet(StringLower($s_TMP_TransHotkey), "_OCR_and_Translate_Hotkey_Function")
 	If Not $bSuccess Then
-		_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyTrans, $iTransHotkeyCode)
-		MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_Hotkey[$eTransFailed_Reg]))					;"Error" 	"Hotkey for translation could not be registered in Windows (they may be in use by another program). Try using a different hotkey for translation."
+		MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_Hotkey[$eTransFailed_Reg]))		;"Error" 	"Hotkey for translation could not be registered in Windows (they may be in use by another program). Try using a different hotkey for translation."
 		SetError(18)
 	EndIf
 EndFunc   ;==>_Registration_Hotkey_Translate
@@ -889,8 +901,7 @@ EndFunc   ;==>_Registration_Hotkey_Translate
 Func _Unregistration_Hotkey_OCR()
 	Local $bSuccess = HotKeySet(StringLower($sOCRHotkey))
 	If Not $bSuccess Then
-		MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_Hotkey[$eOCRFailed_Unreg]))					;"Error"	"Failed to unregister hotkey for OCR."
-		_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyOCR, $iOCRHotkeyCode)
+		MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_Hotkey[$eOCRFailed_Unreg]))		;"Error"	"Failed to unregister hotkey for OCR."
 		SetError(21)
 	EndIf
 EndFunc   ;==>_Unregistration_Hotkey_OCR
@@ -898,8 +909,7 @@ EndFunc   ;==>_Unregistration_Hotkey_OCR
 Func _Unregistration_Hotkey_Translate()
 	Local $bSuccess = HotKeySet(StringLower($sTranslateHotkey))
 	If Not $bSuccess Then
-		MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_Hotkey[$eTransFailed_Unreg]))				;"Error"	"Failed to unregister hotkey for translation."
-		_GUICtrlHotkey_SetHotkeyCode($hInput_HK_HotKeyTrans, $iTransHotkeyCode)
+		MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eError]), _GetStrRes($asArrayMsg_Hotkey[$eTransFailed_Unreg]))	;"Error"	"Failed to unregister hotkey for translation."
 		SetError(22)
 	EndIf
 EndFunc   ;==>_Unregistration_Hotkey_Translate
@@ -1217,19 +1227,17 @@ Func _SendTo_OCR_Service($sWindowsFullPathToImageFile)
 	EndIf
 	;-----------------------------------------------------------Sending the image to OCR
 	$sUnixFullPathToImageFile = StringReplace($sWindowsFullPathToImageFile, "\", "/")
-	$sCurlCmd = 'curl -H "apikey:' & $sOCRAPIKey & '" --ssl-no-revoke --form "file=@' & $sUnixFullPathToImageFile & '" --form "OCREngine=2" --form "language=auto" --form "scale=true" --form "detectOrientation=true" https://api.ocr.space/Parse/Image'
+	$sSystemProxy = _GetSystemProxyForCurl()
+	$sCurlCmd = 'curl' & $sSystemProxy & ' -H "apikey:' & $sOCRAPIKey & '" --ssl-no-revoke --form "file=@' & $sUnixFullPathToImageFile & '" --form "OCREngine=2" --form "language=auto" --form "scale=true" --form "detectOrientation=true" https://api.ocr.space/Parse/Image'
 	$iPID = Run($sCurlCmd, "", "", BitOR($STDERR_CHILD, $STDOUT_CHILD))
 	;----------------------------------------------------------------------
 	Local $hTimer = TimerInit()
-	Local $fDiff
 	Local $sStdErr = ""
-	While 1 And Sleep(20)
+	While Sleep(20)
 		$sStdErr &= StderrRead($iPID)
-		If @error Then
-			ExitLoop
-		EndIf
-		$fDiff = TimerDiff($hTimer)
-		If $fDiff > 30000 Then
+		If @error Then ExitLoop
+		If TimerDiff($hTimer) > 30000 Then
+			ProcessClose($iPID)
 			MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eTimeoutError]), _GetStrRes($asArrayMsg_OCR[$eOCRTimeout]))			;"Timeout Error"	"The OCR provider did not respond within 30 seconds"
 			SetError(2)
 			Return
@@ -1255,9 +1263,9 @@ Func _SendTo_OCR_Service($sWindowsFullPathToImageFile)
 
 	WEnd
 	;-----------------------------------------------------------------OCR Error
-	Local Const $sRegexOCRIsErroredOnProcessing = '(?:\"IsErroredOnProcessing\":)(true)'
-	Local Const $sRegexOCRErrorMessage = '(?:\"ErrorMessage\":\[\")(.*)(?:\"\])'
-	Local Const $sRegexOCRParsedText = '(?:\"ParsedText\":\")(.*)(?:\",\"ErrorMessage\")'
+	Local Const $sRegexOCRIsErroredOnProcessing = '\"IsErroredOnProcessing\":(true)'
+	Local Const $sRegexOCRErrorMessage = '\"ErrorMessage\":\[\"(.*)\"\]'
+	Local Const $sRegexOCRParsedText = '\"ParsedText\":\"(.*?)\",\"ErrorMessage\"'
 	Local $iOCR_ErrorDetect, $iOCRErrorMessageDetect, $asOCRErrorMessage, $iOCRParsedTextDetect, $asOCRParsedText
 	$iOCR_ErrorDetect = StringRegExp($sStdOut, $sRegexOCRIsErroredOnProcessing)
 	If $iOCR_ErrorDetect = 1 Then
@@ -1289,8 +1297,9 @@ Func _SendTo_OCR_Service($sWindowsFullPathToImageFile)
 	EndIf
 
 	Local $sDecodeParsedTextTo_UTF8 = _WinAPI_MultiByteToWideChar($asOCRParsedText[0], 65001, 0, True)
-	Const $sRegexLineBreak = '(?m)(?<=[\.|\?|\!])(\\n)'
+	Const $sRegexLineBreak = '(?<=[.?!])(\\n)'
 	Local $sOCR_OutText =  StringRegExpReplace($sDecodeParsedTextTo_UTF8, $sRegexLineBreak, @CRLF)
+	$sOCR_OutText = StringReplace($sOCR_OutText, '-\n', '-')
 	$sOCR_OutText = StringReplace($sOCR_OutText, '\n', ' ')
 	$sOCR_OutText = StringReplace($sOCR_OutText, '\"', '"')
 	$sOCR_OutText = StringReplace($sOCR_OutText, '\\', '\')
@@ -1302,18 +1311,16 @@ EndFunc ;==>_SendTo_OCR_Service
 Func _SendTo_Translate_Service($sOCR_OutText)
 
 	Local $sURI_TextForTranslate = _URIEncode($sOCR_OutText)
-	Local $sCurlCmd = 'curl --ssl-no-revoke -X GET "https://www.googleapis.com/language/translate/v2?key=' & $sTranslateAPIKey & '&target=' & $sTargetLanguage & '&format=text&q=' & $sURI_TextForTranslate & '"'
+	Local $sCurlCmd = 'curl' & $sSystemProxy & ' --ssl-no-revoke -X GET "https://www.googleapis.com/language/translate/v2?key=' & $sTranslateAPIKey & '&target=' & $sTargetLanguage & '&format=text&q=' & $sURI_TextForTranslate & '"'
 	Local $iPID = Run($sCurlCmd, "", "", BitOR($STDERR_CHILD, $STDOUT_CHILD))
 	;----------------------------------------------------------------------------------
 	Local $hTimer = TimerInit()
 	Local $sStdErr = ""
-	While 1 And Sleep(20)
+	While Sleep(20)
 		$sStdErr &= StderrRead($iPID)
-		If @error Then
-			ExitLoop
-		EndIf
-		$fDiff = TimerDiff($hTimer)
-		If $fDiff > 30000 Then
+		If @error Then ExitLoop
+		If TimerDiff($hTimer) > 30000 Then
+			ProcessClose($iPID)
 			MsgBox($MB_ICONERROR, _GetStrRes($asArrayMsg_Std[$eTimeoutError]), _GetStrRes($asArrayMsg_Translate[$eTransTimeout]))	;"Timeout Error"	"The Translation provider did not respond within 30 seconds."
 			SetError(8)
 			Return
@@ -1339,10 +1346,10 @@ Func _SendTo_Translate_Service($sOCR_OutText)
 
 	WEnd
 	;---------------------------------------------------------------Translation Error
-	Const $sRegexTranslateErrorResponse = '(^\{\s*\"error\":)'
-	Const $sRegexTranslateErrorCode = '(?:\"code\":\s)(\d*)'
-	Const $sRegexTranslateErrorMessage = '(?:\"message\":\s\")([^\"]*)'
-	Const $sRegexTranslateParsedText = '(?:\"translatedText\":\s\")(.*)(?:\",\s*\"detectedSourceLanguage\")'
+	Const $sRegexTranslateErrorResponse = '^\{\s*\"error\":'
+	Const $sRegexTranslateErrorCode = '\"code\":\s(\d*)'
+	Const $sRegexTranslateErrorMessage = '\"message\":\s\"([^\"]*)'
+	Const $sRegexTranslateParsedText = '\"translatedText\":\s\"(.*?)\",\s*\"detectedSourceLanguage\"'
 	Local $iTranslateErrorDetect, $iTranslateErrorCodeDetect, $iTranslateErrorMessageDetect, $asTranslateErrorCode, $asTranslateErrorMessage, $iTranslateParsedTextDetect, $asTranslateParsedText
 	$iTranslateErrorDetect = StringRegExp($sStdOut, $sRegexTranslateErrorResponse)
 	If $iTranslateErrorDetect = 1 Then
@@ -1376,7 +1383,7 @@ Func _SendTo_Translate_Service($sOCR_OutText)
 	EndIf
 
 	Local $sDecodeTranslateParsedTextTo_UTF8 = _WinAPI_MultiByteToWideChar($asTranslateParsedText[0], 65001, 0, True)
-	Local $sTranslateOutText = StringRegExpReplace($sDecodeTranslateParsedTextTo_UTF8, '(\\r\\n)', @CRLF)
+	Local $sTranslateOutText = StringRegExpReplace($sDecodeTranslateParsedTextTo_UTF8, '\\n\\n', @CRLF)
 	$sTranslateOutText = StringReplace($sTranslateOutText, '\n', @CRLF)
 	$sTranslateOutText = StringReplace($sTranslateOutText, '\"', '"')
 	$sTranslateOutText = StringReplace($sTranslateOutText, '\\', '\')
@@ -1468,4 +1475,16 @@ Func _ActivityContextMenuItem_Edit()
 			_GUICtrlMenu_SetItemEnabled($hContextMenu_Edit, 2)		;Select All
 		EndIf
 	EndIf
+EndFunc
+;------------------------------------------------------------------------------------GET SYSTEM PROXY FOR CURL
+Func _GetSystemProxyForCurl()
+    Local $sRegPath = "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+
+    Local $bProxyEnable = RegRead($sRegPath, "ProxyEnable")
+    If @error Or  Not $bProxyEnable Then Return ""
+
+    Local $sProxyServer = RegRead($sRegPath, "ProxyServer")
+    If $sProxyServer = "" Then Return ""
+
+    Return ' --proxy "' & $sProxyServer & '"'
 EndFunc
